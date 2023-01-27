@@ -23,6 +23,34 @@ def todo(name, description, priority, todofile):
     with open(filename, "a+") as f:
         f.write(f"{name} : {description} [Priority: {PRIORITIES[priority]}]")
 
+@click.command()
+@click.argument('idx', type=int, required=1)
+def delete_todo(idx):
+    with open('mytodos.txt', 'r') as f:
+        todo_list = f.read().splitlines()
+        todo_list.pop(idx)
+    with open('mytodos.txt', 'w') as f:
+        f.write("\n".join(todo_list))
+        f.write("\n")
+
+@click.command()
+@click.option('-p', '--priority', type=click.Choice(PRIORITIES.keys()))
+@click.argument('todofile', type=click.Path(exists=True), required=0)
+def list_todos(priority, todofile):
+    filename = todofile if todofile is not None else "mytodos.txt"
+    with open(filename, 'r') as f:
+        todo_list = f.read().splitlines()
+    if priority is None:
+        for idx, todo in enumerate(todo_list):
+            print(f"({idk}) - {todo}")
+    else:
+        for idk, todo in enumerate(todo_list):
+            if f"[Priority: {PRIORITIES[priority]}]" in todo:
+                print(f"({idk}) - {todo}")
+
+
+
+
 
 if __name__ == "__main__":
     todo()
